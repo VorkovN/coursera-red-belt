@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/vorkov/Workspace/C++/Coursera/Red/Final_Project/iterator_range.h
+algorithm
+-
+
+/home/vorkov/Workspace/C++/Coursera/Red/Final_Project/search_server.cpp
+search_server.h
+/home/vorkov/Workspace/C++/Coursera/Red/Final_Project/search_server.h
+iterator_range.h
+/home/vorkov/Workspace/C++/Coursera/Red/Final_Project/iterator_range.h
+algorithm
+-
+iterator
+-
+sstream
+-
+iostream
+-
+
+/home/vorkov/Workspace/C++/Coursera/Red/Final_Project/search_server.h
+istream
+-
+ostream
+-
+set
+-
+list
+-
+vector
+-
+map
+-
+string
+-
+
