@@ -33,11 +33,9 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
         const auto words = SplitIntoWords(current_query);
 
         vector<size_t> docid_count(50000, 0);
-        set<size_t> docids;
         for (const auto &word : words) {
             for (const auto&[docid, hit_count] : index.Lookup(word)) {
                 docid_count[docid] += hit_count;
-                docids.insert(docid);
             }
         }
 
@@ -46,11 +44,11 @@ void SearchServer::AddQueriesStream(istream &query_input, ostream &search_result
         for (int i = 0; i < 5; ++i) {
             pair<size_t, size_t> &result = search_results[i];
             int kostylJ = 0;
-            for (auto& doc: docids) {
-                size_t &count = docid_count[doc];
+            for (int j = 0; j < 50000; ++j) {
+                size_t &count = docid_count[j];
                 if (result.second < count) {
-                    result = {doc, count};
-                    kostylJ = doc;
+                    result = {j, count};
+                    kostylJ = j;
                 }
             }
             docid_count[kostylJ] = 0;
