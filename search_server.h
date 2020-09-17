@@ -18,6 +18,10 @@ public:
     return docs[id];
   }
 
+    const vector<string>& GetDocument() const {
+        return docs;
+    }
+
 private:
   map<string, map<size_t, size_t>> index;
   vector<string> docs;

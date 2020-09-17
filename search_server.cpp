@@ -5,6 +5,7 @@
 #include <iterator>
 #include <sstream>
 #include <iostream>
+#include <numeric>
 
 
 vector<string> SplitIntoWords(const string &line) {
@@ -28,44 +29,47 @@ void SearchServer::UpdateDocumentBase(istream &document_input) {
 
 void SearchServer::AddQueriesStream(istream &query_input, ostream &search_results_output) {
 
-
+    const auto& documents = index.GetDocument();
+    vector<size_t> docid_count(documents.size());
+    vector <int64_t> docids(documents.size());
     for (string current_query; getline(query_input, current_query);) {
         const auto words = SplitIntoWords(current_query);
 
-        vector<size_t> docid_count(50000, 0);
+
+
         for (const auto &word : words) {
             for (const auto&[docid, hit_count] : index.Lookup(word)) {
                 docid_count[docid] += hit_count;
+
             }
         }
 
-        int results_count = 5;
-        vector<pair<size_t, size_t>> search_results(5, make_pair(0, 0));
-        for (int i = 0; i < 5; ++i) {
-            pair<size_t, size_t> &result = search_results[i];
-            int kostylJ = 0;
-            for (int j = 0; j < 50000; ++j) {
-                size_t &count = docid_count[j];
-                if (result.second < count) {
-                    result = {j, count};
-                    kostylJ = j;
-                }
-            }
-            docid_count[kostylJ] = 0;
-            if (result.second == 0) {
-                results_count = i;
-                break;
-            }
+        iota(docids.begin(), docids.end(), 0);
+        {
+            partial_sort(
+                    begin(docids),
+                    Head(docids, 5).end(),
+                    end(docids),
+                    [&docid_count](int64_t lhs, int64_t rhs) {
+                        return pair(docid_count[lhs], -lhs) > pair(docid_count[rhs], -rhs);
+                    }
+            );
         }
 
 
         search_results_output << current_query << ':';
-        for (const auto&[docid, hitcount] : Head(search_results, results_count)) {
+        for (size_t docid : Head(docids, 5)) {
+            const size_t hit_count = docid_count[docid];
+            if (hit_count == 0) {
+                break;
+            }
+
             search_results_output << " {"
                                   << "docid: " << docid << ", "
-                                  << "hitcount: " << hitcount << '}';
+                                  << "hitcount: " << hit_count << '}';
         }
-        search_results_output << endl;
+        search_results_output << '\n';
+        fill(docid_count.begin(), docid_count.end(), 0);
     }
 }
 
