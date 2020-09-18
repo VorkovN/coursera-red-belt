@@ -7,33 +7,42 @@
 #include <vector>
 #include <map>
 #include <string>
+
 using namespace std;
 
 class InvertedIndex {
 public:
-  void Add(const string& document);
-  map<size_t, std::size_t> Lookup(const string& word) const;
+    void Add(const string &document);
 
-  const string& GetDocument(size_t id) const {
-    return docs[id];
-  }
+    map<size_t, std::size_t> Lookup(const string &word) const;
 
-    const vector<string>& GetDocument() const {
+    const string &GetDocument(size_t id) const {
+        return docs[id];
+    }
+
+    const vector<string> &GetDocument() const {
         return docs;
     }
 
+    const map<string, map<size_t, size_t>> &GetIndex() {
+        return index;
+    }
+
 private:
-  map<string, map<size_t, size_t>> index;
-  vector<string> docs;
+    map<string, map<size_t, size_t>> index;
+    vector<string> docs;
 };
 
 class SearchServer {
 public:
-  SearchServer() = default;
-  explicit SearchServer(istream& document_input);
-  void UpdateDocumentBase(istream& document_input);
-  void AddQueriesStream(istream& query_input, ostream& search_results_output);
+    SearchServer() = default;
+
+    explicit SearchServer(istream &document_input);
+
+    void UpdateDocumentBase(istream &document_input);
+
+    void AddQueriesStream(istream &query_input, ostream &search_results_output);
 
 private:
-  InvertedIndex index;
+    InvertedIndex index;
 };

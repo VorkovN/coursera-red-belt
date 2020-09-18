@@ -2,6 +2,7 @@
 #include "parse.h"
 #include "test_runner.h"
 #include "profile.h"
+//#include "duration.h"
 
 #include <algorithm>
 #include <iterator>
@@ -213,8 +214,53 @@ void TestBasicSearch() {
     }
 }
 
+void TestXYZ() {
+    for (int i = 0; i < 1000; ++i) {
+        const vector<string> docs = {
+                "x x x y y y",
+                "x y z z z",
+                "y y z z",
+                "x x y y y y",
+                "x y z",
+                "x x x x y z",
+                "x x x x",
+                "x",
+                "y",
+                "z",
+                "x y",
+                "x z",
+                "x y z",
+        };
+
+        const vector<string> queries = {
+                "x",
+                "y",
+                "z",
+                "x y",
+                "x z",
+                "x y z",
+        };
+
+        const vector<string> expected = {
+                "x: {docid: 5, hitcount: 4} {docid: 6, hitcount: 4} {docid: 0, hitcount: 3} {docid: 3, hitcount: 2} {docid: 1, hitcount: 1}",
+                "y: {docid: 3, hitcount: 4} {docid: 0, hitcount: 3} {docid: 2, hitcount: 2} {docid: 1, hitcount: 1} {docid: 4, hitcount: 1}",
+                "z: {docid: 1, hitcount: 3} {docid: 2, hitcount: 2} {docid: 4, hitcount: 1} {docid: 5, hitcount: 1} {docid: 9, hitcount: 1}",
+                "x y: {docid: 0, hitcount: 6} {docid: 3, hitcount: 6} {docid: 5, hitcount: 5} {docid: 6, hitcount: 4} {docid: 1, hitcount: 2}",
+                "x z: {docid: 5, hitcount: 5} {docid: 1, hitcount: 4} {docid: 6, hitcount: 4} {docid: 0, hitcount: 3} {docid: 2, hitcount: 2}",
+                "x y z: {docid: 0, hitcount: 6} {docid: 3, hitcount: 6} {docid: 5, hitcount: 6} {docid: 1, hitcount: 5} {docid: 2, hitcount: 4}",
+        };
+        TestFunctionality(docs, queries, expected);
+    }
+}
+
 int main() {
     TestRunner tr;
+
+    {
+        LOG_DURATION("TestXYZ")
+        RUN_TEST(tr, TestXYZ);
+    }
+
     {
         LOG_DURATION("TestSerpFormat")
         RUN_TEST(tr, TestSerpFormat);
