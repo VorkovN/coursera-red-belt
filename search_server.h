@@ -14,7 +14,7 @@ class InvertedIndex {
 public:
     void Add(const string &document);
 
-    map<size_t, std::size_t> Lookup(const string &word) const;
+    vector<pair<size_t, size_t>> Lookup(const string &word) const;
 
     const string &GetDocument(size_t id) const {
         return docs[id];
@@ -24,12 +24,12 @@ public:
         return docs;
     }
 
-    const map<string, map<size_t, size_t>> &GetIndex() {
+    const map<string, vector<pair<size_t, size_t>>> &GetIndex() {
         return index;
     }
 
 private:
-    map<string, map<size_t, size_t>> index;
+    map<string, vector<pair<size_t, size_t>>> index;
     vector<string> docs;
 };
 

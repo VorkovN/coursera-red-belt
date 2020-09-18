@@ -75,12 +75,19 @@ void InvertedIndex::Add(const string &document) {
     docs.push_back(document);
 
     const size_t docid = docs.size() - 1;
+    map<string, pair<size_t, size_t>> vsp_map;
     for (const auto &word : SplitIntoWords(document)) {
-        index[word][docid]++;
+        if (vsp_map.find(word) == vsp_map.end())
+            vsp_map[word] = {docid, 0};
+        vsp_map[word].first = docid;
+        vsp_map[word].second++;
+    }
+    for (auto&[word, pair]: vsp_map) {
+        index[word].push_back(pair);
     }
 }
 
-map<size_t, size_t> InvertedIndex::Lookup(const string &word) const {
+vector<pair<size_t, size_t>> InvertedIndex::Lookup(const string &word) const {
     auto it = index.find(word);
     if (it != index.end())
         return it->second;
